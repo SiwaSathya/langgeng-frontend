@@ -1,42 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Cashier System</title>
+    <title>Login - Administration</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-blue-50 flex items-center justify-center h-screen">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-96">
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-blue-600">Administration</h1>
-            <p class="text-gray-400 text-sm">Please login to your account</p>
+    <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border border-blue-100">
+        <div class="text-center mb-10">
+            <div class="bg-blue-400 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h1 class="text-3xl font-bold text-blue-600 italic">Shop Name</h1>
+            <p class="text-gray-400 mt-2">Masuk untuk memulai shift kasir</p>
         </div>
-        <form action="dashboard.html" onsubmit="return validateLogin(event)">
-            <div class="mb-4">
-                <label class="block text-gray-600 text-sm font-semibold mb-2">Username</label>
-                <input type="text" id="username" class="w-full px-4 py-2 border border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="admin">
+        
+        <form onsubmit="handleLogin(event)" class="space-y-6">
+            <div>
+                <label class="block text-gray-700 font-bold mb-2 ml-1">Username</label>
+                <input type="text" id="username" required class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none transition" placeholder="admin">
             </div>
-            <div class="mb-6">
-                <label class="block text-gray-600 text-sm font-semibold mb-2">Password</label>
-                <input type="password" id="password" class="w-full px-4 py-2 border border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="••••••••">
+            <div>
+                <label class="block text-gray-700 font-bold mb-2 ml-1">Kata Sandi</label>
+                <input type="password" id="password" required class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none transition" placeholder="••••••••">
             </div>
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg transition duration-300">
-                Login
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black py-4 rounded-2xl shadow-lg transition transform active:scale-95">
+                MASUK SEKARANG
             </button>
         </form>
     </div>
 
     <script>
-        function validateLogin(e) {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            if(user === "admin" && pass === "admin123") {
-                return true;
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if(u === "admin" && p === "admin123") {
+                window.location.href = "dashboard.html";
             } else {
-                e.preventDefault();
-                alert("Username atau Password Salah! (admin/admin123)");
-                return false;
+                alert("Username atau Password salah!");
             }
         }
     </script>
