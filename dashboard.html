@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir - Shop Name</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 flex h-screen overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-blue-400 text-white flex flex-col p-6 space-y-8 shadow-2xl z-20">
+        <div class="flex items-center space-x-3 mb-4">
+            <i class="fas fa-user-circle text-4xl"></i>
+            <div>
+                <p class="text-xs opacity-80">Kasir Aktif</p>
+                <p class="font-bold">Desak</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-4">
+            <a href="#" class="flex items-center space-x-3 p-4 bg-white text-blue-500 rounded-2xl shadow-md font-bold">
+                <i class="fas fa-calculator"></i> <span>Kasir Utama</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 p-4 hover:bg-blue-300 rounded-2xl transition opacity-60">
+                <i class="fas fa-history"></i> <span>Riwayat</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 p-4 hover:bg-blue-300 rounded-2xl transition opacity-60">
+                <i class="fas fa-cog"></i> <span>Pengaturan</span>
+            </a>
+        </nav>
+        <a href="index.html" class="flex items-center space-x-3 p-4 hover:bg-red-400 rounded-2xl transition font-bold">
+            <i class="fas fa-sign-out-alt"></i> <span>Keluar</span>
+        </a>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white border-b px-8 py-6 flex justify-between items-center">
+            <h1 class="text-2xl font-black text-gray-800">SHOP NAME</h1>
+            <div id="clock" class="text-gray-400 font-mono font-bold text-lg"></div>
+        </header>
+
+        <div class="flex-1 p-8 grid grid-cols-3 gap-8 overflow-y-auto">
+            
+            <!-- SECTION TRANSAKSI (Kiri & Tengah) -->
+            <div class="col-span-2 space-y-8">
+                
+                <!-- CARD INPUT -->
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 relative">
+                    <h2 class="text-blue-400 font-black text-2xl mb-8 flex items-center">
+                        <i class="fas fa-shopping-cart mr-3"></i> Transaction
+                    </h2>
+
+                    <div class="grid grid-cols-2 gap-8 mb-8">
+                        <div class="relative">
+                            <label class="block text-gray-700 font-bold mb-3 ml-1 text-sm">Data Item (Cari Nama/Kode)</label>
+                            <input type="text" id="search-prod" onkeyup="searchAPI(this.value)" 
+                                   class="w-full bg-gray-100 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-400 text-lg font-semibold" placeholder="Ketik produk...">
+                            
+                            <!-- Search Result Dropdown -->
+                            <div id="res-dropdown" class="absolute w-full bg-white border mt-2 rounded-2xl shadow-2xl z-50 hidden max-h-60 overflow-y-auto"></div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-400 text-sm font-bold uppercase tracking-widest">Total Belanja</p>
+                            <h1 id="big-total" class="text-red-500 text-5xl font-black mt-1 tracking-tighter">IDR 0</h1>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-6 mb-8">
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Jumlah (Qty)</label>
+                            <input type="number" id="inp-qty" value="1" min="1" onchange="updateTotal()" 
+                                   class="w-full bg-gray-100 p-4 rounded-2xl outline-none text-center font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Bayar (Cash)</label>
+                            <input type="number" id="inp-pay" 
+                                   class="w-full bg-blue-50 border-2 border-blue-200 p-4 rounded-2xl outline-none font-black text-blue-600 text-xl text-center">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="executePayment()" class="w-full bg-blue-400 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-lg shadow-lg shadow-blue-200 transition active:scale-95">
+                                PAY & PRINT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LIST ORDER TABLE -->
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                    <h3 class="font-black text-gray-800 mb-6 text-lg">List Order</h3>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-gray-400 border-b-2 uppercase text-xs font-black tracking-widest">
+                                <th class="pb-4">No</th>
+                                <th class="pb-4">Item Name</th>
+                                <th class="pb-4 text-center">Qty</th>
+                                <th class="pb-4 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cart-table" class="font-bold text-gray-700">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION INFO (Kanan) -->
+            <div class="space-y-8">
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-400">
+                    <h2 class="text-blue-400 font-black text-2xl mb-6">Chart</h2>
+                    <div class="h-48 flex items-end justify-between px-2 mb-8">
+                        <div class="w-8 bg-blue-100 h-full rounded-t-lg"></div>
+                        <div class="w-8 bg-blue-200 h-4/5 rounded-t-lg"></div>
+                        <div class="w-8 bg-blue-300 h-3/5 rounded-t-lg"></div>
+                        <div class="w-8 bg-blue-400 h-2/5 rounded-t-lg"></div>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-6 font-bold">*Data penjualan real-time hari ini</p>
+                    <div id="stat-list" class="space-y-4">
+                        <div class="flex justify-between border-b pb-3 text-sm"><span>Target Penjualan</span><span class="font-black">90%</span></div>
+                        <div class="flex justify-between border-b pb-3 text-sm"><span>Stok Keluar</span><span class="font-black">40 Unit</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API = "http://localhost:3000/api";
+        let curProd = null;
+
+        // 1. Search API
+        async function searchAPI(q) {
+            if(q.length < 2) return document.getElementById('res-dropdown').classList.add('hidden');
+            const res = await fetch(`${API}/products?search=${q}`);
+            const data = await res.json();
+            const list = document.getElementById('res-dropdown');
+            list.innerHTML = "";
+            list.classList.remove('hidden');
+            data.forEach(p => {
+                const d = document.createElement('div');
+                d.className = "p-4 hover:bg-blue-50 cursor-pointer border-b flex justify-between font-bold";
+                d.innerHTML = `<span>${p.nama}</span> <span class="text-blue-500">IDR ${p.h_jual.toLocaleString()}</span>`;
+                d.onclick = () => {
+                    curProd = p;
+                    document.getElementById('search-prod').value = p.nama;
+                    list.classList.add('hidden');
+                    updateTotal();
+                }
+                list.appendChild(d);
+            });
+        }
+
+        // 2. Update Visual Total
+        function updateTotal() {
+            if(!curProd) return;
+            const qty = document.getElementById('inp-qty').value;
+            const total = curProd.h_jual * qty;
+            document.getElementById('big-total').innerText = `IDR ${total.toLocaleString()}`;
+            
+            // Update Mini Table preview
+            const table = document.getElementById('cart-table');
+            table.innerHTML = `
+                <tr class="border-b">
+                    <td class="py-5 text-gray-400">1.</td>
+                    <td class="py-5">${curProd.nama}</td>
+                    <td class="py-5 text-center">${qty}</td>
+                    <td class="py-5 text-right text-red-500">IDR ${total.toLocaleString()}</td>
+                </tr>
+            `;
+        }
+
+        // 3. Execute POST API
+        async function executePayment() {
+            if(!curProd) return alert("Pilih produk!");
+            const qty = document.getElementById('inp-qty').value;
+            const pay = document.getElementById('inp-pay').value;
+
+            const res = await fetch(`${API}/sales`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    product_search: curProd.kode,
+                    qty: parseFloat(qty),
+                    amount_paid: parseFloat(pay),
+                    payment_method: "Tunai",
+                    member_name: "Desak" // Nama Kasir login
+                })
+            });
+
+            const data = await res.json();
+            if(res.ok) {
+                alert(`TRANSAKSI BERHASIL!\nKembalian: IDR ${data.change.toLocaleString()}`);
+                location.reload();
+            } else {
+                alert("GAGAL: " + data.error);
+            }
+        }
+
+        // Clock logic
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleString('id-ID');
+        }, 1000);
+    </script>
+</body>
+</html>
